@@ -148,5 +148,33 @@ public function listaCadastrados() {
         return $re;
     }
 
+public function carregarUsuarioPorId($id) {
+        require_once 'ConexaoBD.php';
+        $con = new ConexaoBD();
+        $conn = $con->conectar();
+
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        $sql = "SELECT * FROM usuario WHERE idusuario = " . $id;
+        $re = $conn->query($sql);
+        $r = $re->fetch_object();
+
+        if ($r != null) {
+            $this->id = $r->idusuario;
+            $this->nome = $r->nome;
+            $this->cpf = $r->cpf;
+            $this->email = $r->email;
+            $this->senha = $r->senha;
+            $this->dataNascimento = $r->dataNascimento;
+            $conn->close();
+            return true;
+        } else {
+            $conn->close();
+            return false;
+        }
+    }
+
 } 
 ?>

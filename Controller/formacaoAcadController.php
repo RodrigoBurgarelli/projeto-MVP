@@ -30,6 +30,11 @@ $formacao = new FormacaoAcad();
 return $results = $formacao->listaFormacoes($idusuario);
 }
 
+public function gerarListaPorId($idUsuario) {
+        require_once __DIR__ . '/../Model/FormacaoAcad.php';
+        $f = new FormacaoAcad();
+        return $f->listaFormacoes($idUsuario);
+    }
 
 }
 

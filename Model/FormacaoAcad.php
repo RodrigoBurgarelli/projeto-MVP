@@ -97,17 +97,12 @@ class FormacaoAcad
     } 
 
     
-    public function listaFormacoes($idusuario)
-    {
+    public function listaFormacoes($idUsuario) {
         require_once 'ConexaoBD.php';
         $con = new ConexaoBD();
         $conn = $con->conectar();
         
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-        
-        $sql = "SELECT * FROM formacaoAcademica WHERE idusuario = '".$idusuario."'";
+        $sql = "SELECT * FROM formacaoacademia WHERE idusuario = " . $idUsuario;
         $re = $conn->query($sql);
         $conn->close();
         return $re;

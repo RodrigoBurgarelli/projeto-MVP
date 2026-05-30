@@ -132,5 +132,16 @@ switch (true) {
     case isset($_POST["btnVoltar"]):
         include_once __DIR__ . "/../View/ADMPrincipal.php";
         break;
+
+    case isset($_POST["btnVisualizarUsuario"]):
+        require_once __DIR__ . "/UsuarioController.php";
+        $uController = new UsuarioController();
+        
+        if ($uController->detalharUsuario($_POST["idUsuarioSelecao"])) {
+            include_once __DIR__ . "/../View/ADMVisualizarCadastro.php";
+        } else {
+            include_once __DIR__ . "/../View/operacaoNaoRealizada.php";
+        }
+        break;
 }
 ?>

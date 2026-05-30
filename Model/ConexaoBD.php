@@ -3,7 +3,7 @@ class ConexaoBD {
     
     private $serverName = "localhost";
     private $userName = "root";
-    private $password = "root";
+    private $password = "";
     private $dbName = "projeto_final";
 
     public function conectar() {

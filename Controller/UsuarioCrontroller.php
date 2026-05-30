@@ -45,5 +45,15 @@ return false;
 }
 }
 
+public function detalharUsuario($id) {
+        require_once __DIR__ . '/../Model/Usuario.php';
+        $usuario = new Usuario();
+        if ($usuario->carregarUsuarioPorId($id)) {
+            $_SESSION['UsuarioInspecionado'] = serialize($usuario);
+            return true;
+        }
+        return false;
+    }
+
 }
 ?>

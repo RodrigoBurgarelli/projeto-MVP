@@ -27,5 +27,12 @@ require_once '../Model/ExperienciaProfissional.php';
 $expP = new ExperienciaProfissional();
 return $results = $expP->listaExperiencias($idusuario);
 }
+
+public function gerarListaPorId($idUsuario) {
+        require_once __DIR__ . '/../Model/ExperienciaProfissional.php';
+        $ep = new ExperienciaProfissional();
+        return $ep->listaExperiencias($idUsuario);
+    }
+    
 }
 ?>
