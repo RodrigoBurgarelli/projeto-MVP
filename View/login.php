@@ -10,7 +10,7 @@
 </head>
 <body class="w3-light-grey">
 
-    <form action="" method="post" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin w3-display-middle" style="width: 30%;">
+    <form action="Controller/Navegacao.php" method="post" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin w3-display-middle" style="width: 30%;">
         
         <input type="hidden" name="nome_form" value="frmLogin" />
         <h2 class="w3-center">Login</h2>
@@ -35,6 +35,9 @@
             </div>
             <div class="w3-half">
                 <button name="btnPrimeiroAcesso" class="w3-button w3-block w3-blue w3-round-large" style="width: 90%; float: right;">Primeiro Acesso?</button>
+            </div>
+            <div class="w3-center w3-row w3-section">
+                <button name="btnADM" class="w3-button w3-block w3-blue w3-round-large w3-margin-top" style="width: 95%; margin: 0 auto;">Login como Administrador</button>
             </div>
         </div>
         

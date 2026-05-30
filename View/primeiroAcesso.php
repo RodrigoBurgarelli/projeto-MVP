@@ -11,7 +11,7 @@
 </head>
 <body class="w3-light-grey">
 
-    <form action="" method="post" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin w3-display-middle" style="width: 30%;">
+    <form action="Controller/Navegacao.php" method="post" class="w3-container w3-card-4 w3-light-grey w3-text-blue w3-margin w3-display-middle" style="width: 30%;">
         
         <h2 class="w3-center">Primeiro Acesso</h2>
         

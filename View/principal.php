@@ -25,6 +25,24 @@
 </head>
 <body class="w3-light-grey">
 
+<?php
+include_once '../Model/Usuario.php';
+include_once '../Controller/FormacaoAcadController.php'; 
+include_once '../Controller/ExperienciaProfissionalController.php'; 
+
+if(!isset($_SESSION)) {
+    session_start();
+}
+
+// Trava de segurança opcional: impede erro caso acesse o link sem fazer login
+if (!isset($_SESSION['Usuario'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$usuarioLogado = unserialize($_SESSION['Usuario']);
+?>
+
     <nav class="w3-sidebar w3-bar-block w3-center w3-blue">
         <a href="#home" class="w3-bar-item w3-button w3-block w3-hover-light-grey w3-hover-text-cyan w3-text-light-grey">
             <i class="fa fa-home w3-xxlarge"></i>
@@ -64,13 +82,34 @@
         <div class="w3-padding-64 w3-content w3-text-grey" id="dPessoais">
             <h2 class="w3-text-cyan">Dados Pessoais</h2>
             
-            <form action="" method="post" class="w3-row w3-light-grey w3-text-blue w3-margin" style="width:100%;">
-                <input class="w3-input w3-border w3-round-large" name="txtID" type="hidden" value="">
+            <form action="Controller/Navegacao.php" method="post" class="w3-row w3-light-grey w3-text-blue w3-margin" style="width:100%;">
+                <input class="w3-input w3-border w3-round-large" name="txtID" type="hidden" value="<?php echo $usuarioLogado->getID();?>">
                 
                 <div class="w3-row w3-section">
                     <div class="w3-col" style="width:11%;"><i class="w3-xxlarge fa fa-user"></i></div>
                     <div class="w3-rest">
-                        <input class="w3-input w3-border w3-round-large" name="txtNome" type="text" placeholder="Nome Completo" value="">
+                        <input class="w3-input w3-border w3-round-large" name="txtNome" type="text" placeholder="Nome Completo" value="<?php echo $usuarioLogado->getNome();?>">
+                    </div>
+                </div>
+
+                <div class="w3-row w3-section">
+                    <div class="w3-col" style="width:11%;"><i class="w3-xxlarge fa fa-calendar"></i></div>
+                    <div class="w3-rest">
+                        <input class="w3-input w3-border w3-round-large" name="txtData" type="date" value="<?php echo $usuarioLogado->getDataNascimento();?>">
+                    </div>
+                </div>
+
+                <div class="w3-row w3-section">
+                    <div class="w3-col" style="width:11%;"><i class="w3-xxlarge fa fa-drivers-license"></i></div>
+                    <div class="w3-rest">
+                        <input class="w3-input w3-border w3-round-large" name="txtCPF" type="text" placeholder="CPF: 99999999999" value="<?php echo $usuarioLogado->getCPF();?>">
+                    </div>
+                </div>
+
+                <div class="w3-row w3-section">
+                    <div class="w3-col" style="width:11%;"><i class="w3-xxlarge fa fa-envelope-o"></i></div>
+                    <div class="w3-rest">
+                        <input class="w3-input w3-border w3-round-large" name="txtEmail" type="text" placeholder="Email" value="<?php echo $usuarioLogado->getEmail();?>">
                     </div>
                 </div>
                 
@@ -85,14 +124,14 @@
         <div class="w3-padding-64 w3-content w3-text-grey" id="formacao">
             <h2 class="w3-text-cyan">Formação</h2>
             
-            <form action="" method="post" class="w3-row w3-light-grey w3-text-blue w3-margin" style="width:100%;">
+            <form action="Controller/Navegacao.php" method="post" class="w3-row w3-light-grey w3-text-blue w3-margin" style="width:100%;">
                 <div class="w3-row w3-center w3-margin-bottom">
                     <div class="w3-col" style="width:50%; font-weight: bold;">Data Inicial</div>
                     <div class="w3-rest" style="font-weight: bold;">Data Final</div>
                 </div>
                 
                 <div class="w3-row w3-section">
-                    <div class="w3-col w3-section" style="width:45%;">
+                    <div class="w3-col" style="width:45%;">
                         <div class="w3-col" style="width:15%;"><i class="w3-xxlarge fa fa-calendar"></i></div>
                         <div class="w3-rest">
                             <input class="w3-input w3-border w3-round-large" name="txtInicioFA" type="date">
@@ -134,12 +173,25 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>--/--/----</td>
-                            <td>--/--/----</td>
-                            <td>Exemplo de Formação Técnica</td>
-                            <td><button class="w3-button w3-red w3-round w3-small"><i class="fa fa-trash"></i></button></td>
-                        </tr>
+                        <?php
+                        $fCon = new FormacaoAcadController();
+                        $results = $fCon->gerarLista($usuarioLogado->getID());
+                        if($results != null) {
+                            while($row = $results->fetch_object()) {
+                                echo '<tr>';
+                                echo '<td style="width: 10%;">'.date("d/m/Y", strtotime($row->inicio)).'</td>';
+                                echo '<td style="width: 10%;">'.date("d/m/Y", strtotime($row->fim)).'</td>';
+                                echo '<td style="width: 65%;" class="w3-left-align">'.$row->descricao.'</td>';
+                                echo '<td style="width: 5%;">';
+                                echo '  <form action="/Controller/Navegacao.php" method="post">';
+                                echo '      <input type="hidden" name="id" value="'.$row->idformacaoAcademica.'">';
+                                echo '      <button name="btnExcluirFA" class="w3-button w3-block w3-red w3-round w3-small"><i class="fa fa-trash"></i></button>';
+                                echo '  </form>';
+                                echo '</td>';
+                                echo '</tr>';
+                            }
+                        }
+                        ?>
                     </tbody>
                 </table>
             </div>
@@ -150,8 +202,7 @@
         <div class="w3-padding-64 w3-content w3-text-grey" id="eProfissional">
             <h2 class="w3-text-cyan">Experiência Profissional</h2>
             
-            <form action="" method="post" class="w3-row w3-light-grey w3-text-blue w3-margin" style="width: 100%;">
-                
+            <form action="Controller/Navegacao.php" method="post" class="w3-row w3-light-grey w3-text-blue w3-margin" style="width: 100%;">
                 <div class="w3-row w3-center w3-margin-bottom">
                     <div class="w3-col" style="width:45%; font-weight: bold;">Data Inicial</div>
                     <div class="w3-col" style="width:10%; min-height: 1px;"></div>
@@ -165,9 +216,7 @@
                             <input class="w3-input w3-border w3-round-large" name="txtInicioEP" type="date">
                         </div>
                     </div>
-                    
                     <div class="w3-col" style="width:10%; min-height: 1px;"></div>
-                    
                     <div class="w3-col w3-section" style="width:45%;">
                         <div class="w3-col" style="width:13%;"><i class="w3-xxlarge fa fa-calendar"></i></div>
                         <div class="w3-rest">
@@ -209,17 +258,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>--/--/----</td>
-                            <td>--/--/----</td>
-                            <td>Nome da Empresa</td>
-                            <td>Descrição das atividades realizadas</td>
-                            <td>
-                                <button class="w3-button w3-red w3-round w3-small">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
+                        <?php
+                        $ePro = new ExperienciaProfissionalController();
+                        $resultsEP = $ePro->gerarLista($usuarioLogado->getID());
+                        if($resultsEP != null) {
+                            while($rowEP = $resultsEP->fetch_object()) {
+                                echo '<tr>';
+                                echo '<td style="width: 10%;">'.date("d/m/Y", strtotime($rowEP->inicio)).'</td>';
+                                echo '<td style="width: 10%;">'.date("d/m/Y", strtotime($rowEP->fim)).'</td>';
+                                echo '<td style="width: 15%;">'.$rowEP->empresa.'</td>';
+                                echo '<td style="width: 60%;" class="w3-left-align">'.$rowEP->descricao.'</td>';
+                                echo '<td style="width: 5%;">';
+                                echo '  <form action="/Controller/Navegacao.php" method="post">';
+                                echo '      <input type="hidden" name="idEP" value="'.$rowEP->idexperienciaprofissional.'">';
+                                echo '      <button name="btnExcluirEP" class="w3-button w3-block w3-red w3-round w3-small"><i class="fa fa-trash"></i></button>';
+                                echo '  </form>';
+                                echo '</td>';
+                                echo '</tr>';
+                            }
+                        }
+                        ?>
                     </tbody>
                 </table>
             </div>
@@ -230,8 +288,7 @@
         <div class="w3-padding-64 w3-content w3-text-grey" id="outrasFormacoes">
             <h2 class="w3-text-cyan">Outras Formações</h2>
             
-            <form action="" method="post" class="w3-row w3-light-grey w3-text-blue w3-margin" style="width: 100%;">
-                
+            <form action="Controller/Navegacao.php" method="post" class="w3-row w3-light-grey w3-text-blue w3-margin" style="width: 100%;">
                 <div class="w3-row w3-center w3-margin-bottom">
                     <div class="w3-col" style="width:45%; font-weight: bold;">Data Inicial</div>
                     <div class="w3-col" style="width:10%; min-height: 1px;"></div>
@@ -245,9 +302,7 @@
                             <input class="w3-input w3-border w3-round-large" name="txtInicioOF" type="date">
                         </div>
                     </div>
-                    
                     <div class="w3-col" style="width:10%; min-height: 1px;"></div>
-                    
                     <div class="w3-col w3-section" style="width:45%;">
                         <div class="w3-col" style="width:13%;"><i class="w3-xxlarge fa fa-calendar"></i></div>
                         <div class="w3-rest">
@@ -286,9 +341,7 @@
                             <td>--/--/----</td>
                             <td class="w3-left-align">Exemplo: Curso Extensão de PHP Avançado</td>
                             <td>
-                                <button class="w3-button w3-red w3-round w3-small">
-                                    <i class="fa fa-trash"></i>
-                                </button>
+                                <button class="w3-button w3-red w3-round w3-small"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
                     </tbody>
